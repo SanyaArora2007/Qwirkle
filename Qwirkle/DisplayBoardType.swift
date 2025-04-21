@@ -15,19 +15,209 @@ struct DisplayBoardType {
     let TILESIZE: Double = 70
     let TOTAL_NUMBER_OF_TILES: Int = 108
     var squares = [[TileType?]]()
+    var isBoardEmpty: Bool = true
     
     init() {
         let rowOfSquares = [TileType?](repeating: nil, count: TOTAL_NUMBER_OF_TILES)
         squares = [[TileType?]](repeating: rowOfSquares, count: TOTAL_NUMBER_OF_TILES)
     }
     
-    mutating func placeTile(tile: TileType, row: Int, column: Int) -> Bool {
-        if row < TOTAL_NUMBER_OF_TILES && column < TOTAL_NUMBER_OF_TILES && squares[row][column] == nil {
-            squares[row][column] = tile
+    func tileToLeft(row: Int, column: Int) -> TileType? {
+        if column == 0 {
+            return nil
+        }
+        return squares[row][column - 1]
+    }
+    
+    func tileToRight(row: Int, column: Int) -> TileType? {
+        if column == TOTAL_NUMBER_OF_TILES - 1 {
+            return nil
+        }
+        return squares[row][column + 1]
+    }
+    
+    func tileAbove(row: Int, column: Int) -> TileType? {
+        if row == 0 {
+            return nil
+        }
+        return squares[row + 1][column]
+    }
+    
+    func tileBelow(row: Int, column: Int) -> TileType? {
+        if row == TOTAL_NUMBER_OF_TILES - 1 {
+            return nil
+        }
+        return squares[row - 1][column]
+    }
+    
+    func leftNeighbors(row: Int, column: Int) -> [TileType] {
+        var neighbors = [TileType]()
+        var nextColumn = column
+        while let tile = tileToLeft(row: row, column: nextColumn) {
+            neighbors.append(tile)
+            nextColumn -= 1
+        }
+        print("left neighbors: \(neighbors)")
+        return neighbors
+    }
+    
+    func rightNeighbors(row: Int, column: Int) -> [TileType] {
+        var neighbors = [TileType]()
+        var nextColumn = column
+        while let tile = tileToRight(row: row, column: nextColumn) {
+            neighbors.append(tile)
+            nextColumn += 1
+        }
+        print("right neighbors: \(neighbors)")
+        return neighbors
+    }
+    
+    func aboveNeighbors(row: Int, column: Int) -> [TileType] {
+        var neighbors = [TileType]()
+        var nextRow = row
+        while let tile = tileAbove(row: nextRow, column: column) {
+            neighbors.append(tile)
+            nextRow += 1
+        }
+        print("up neighbors: \(neighbors)")
+        return neighbors
+    }
+    
+    func belowNeighbors(row: Int, column: Int) -> [TileType] {
+        var neighbors = [TileType]()
+        var nextRow = row
+        while let tile = tileBelow(row: nextRow, column: column) {
+            neighbors.append(tile)
+            nextRow -= 1
+        }
+        print("down neighbors: \(neighbors)")
+        return neighbors
+    }
+    
+    func isShapeMatching(neighbors: [TileType]) -> Bool {
+        if neighbors.count < 2 {
             return true
-        } else {
+        }
+        for index in 1...neighbors.count - 1 {
+            if neighbors[index].shape != neighbors[index - 1].shape {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func isColorMatching(neighbors: [TileType]) -> Bool {
+        if neighbors.count < 2 {
+            return true
+        }
+        for index in 1...neighbors.count - 1 {
+            if neighbors[index].color != neighbors[index - 1].color {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func checkDirection(neighbors: [TileType], tile: TileType) -> Bool {
+        if neighbors.isEmpty {
+            return true
+        }
+        if neighbors.count == 1 {
+            if neighbors[0].color != tile.color && neighbors[0].shape != tile.shape {
+                return false
+            }
+        }
+        else {
+            if isColorMatching(neighbors: neighbors) {
+                if neighbors[0].color != tile.color {
+                    return false
+                }
+            }
+            else if isShapeMatching(neighbors: neighbors) {
+                if neighbors[0].shape != tile.shape {
+                    return false
+                }
+            }
+            else {
+                return false
+            }
+        }
+        return true
+    }
+    
+    mutating func placeTile(tile: TileType, row: Int, column: Int) -> Bool {
+        if row >= TOTAL_NUMBER_OF_TILES {
             return false
         }
+        
+        if column >= TOTAL_NUMBER_OF_TILES {
+            return false
+        }
+        
+        if squares[row][column] != nil {
+            return false
+        }
+        
+        let left = tileToLeft(row: row, column: column)
+        let right = tileToRight(row: row, column: column)
+        let above = tileAbove(row: row, column: column)
+        let below = tileBelow(row: row, column: column)
+        
+        let leftTiles = leftNeighbors(row: row, column: column)
+        let rightTiles = rightNeighbors(row: row, column: column)
+        let aboveTiles = aboveNeighbors(row: row, column: column)
+        let belowTiles = belowNeighbors(row: row, column: column)
+        
+        if left == nil && right == nil && above == nil && below == nil && !isBoardEmpty {
+            return false
+        }
+        
+        for neighbor in leftTiles {
+            if neighbor.color == tile.color && neighbor.shape == tile.shape {
+                return false
+            }
+        }
+        
+        for neighbor in rightTiles {
+            if neighbor.color == tile.color && neighbor.shape == tile.shape {
+                return false
+            }
+        }
+        
+        for neighbor in aboveTiles {
+            if neighbor.color == tile.color && neighbor.shape == tile.shape {
+                return false
+            }
+        }
+        
+        for neighbor in belowTiles {
+            if neighbor.color == tile.color && neighbor.shape == tile.shape {
+                return false
+            }
+        }
+        
+        if !checkDirection(neighbors: leftTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: rightTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: aboveTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: belowTiles, tile: tile) {
+            return false
+        }
+        
+        squares[row][column] = tile
+        isBoardEmpty = false
+        
+        print("row: \(row), column: \(column)")
+                
+        return true
     }
     
     func determinPositionToSnap(clickLocation: CGPoint) -> CGPoint {
