@@ -94,6 +94,57 @@ struct DisplayBoardType {
         return neighbors
     }
     
+    func isShapeMatching(neighbors: [TileType]) -> Bool {
+        if neighbors.count < 2 {
+            return true
+        }
+        for index in 1...neighbors.count - 1 {
+            if neighbors[index].shape != neighbors[index - 1].shape {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func isColorMatching(neighbors: [TileType]) -> Bool {
+        if neighbors.count < 2 {
+            return true
+        }
+        for index in 1...neighbors.count - 1 {
+            if neighbors[index].color != neighbors[index - 1].color {
+                return false
+            }
+        }
+        return true
+    }
+    
+    func checkDirection(neighbors: [TileType], tile: TileType) -> Bool {
+        if neighbors.isEmpty {
+            return true
+        }
+        if neighbors.count == 1 {
+            if neighbors[0].color != tile.color && neighbors[0].shape != tile.shape {
+                return false
+            }
+        }
+        else {
+            if isColorMatching(neighbors: neighbors) {
+                if neighbors[0].color != tile.color {
+                    return false
+                }
+            }
+            else if isShapeMatching(neighbors: neighbors) {
+                if neighbors[0].shape != tile.shape {
+                    return false
+                }
+            }
+            else {
+                return false
+            }
+        }
+        return true
+    }
+    
     mutating func placeTile(tile: TileType, row: Int, column: Int) -> Bool {
         if row >= TOTAL_NUMBER_OF_TILES {
             return false
@@ -112,60 +163,53 @@ struct DisplayBoardType {
         let above = tileAbove(row: row, column: column)
         let below = tileBelow(row: row, column: column)
         
+        let leftTiles = leftNeighbors(row: row, column: column)
+        let rightTiles = rightNeighbors(row: row, column: column)
+        let aboveTiles = aboveNeighbors(row: row, column: column)
+        let belowTiles = belowNeighbors(row: row, column: column)
+        
         if left == nil && right == nil && above == nil && below == nil && !isBoardEmpty {
             return false
         }
         
-        if left != nil && (
-            (left!.color == tile.color && left!.shape == tile.shape) ||
-            (left!.color != tile.color && left!.shape != tile.shape)
-        ) {
-            return false
-        }
-        
-        if right != nil && (
-            (right!.color == tile.color && right!.shape == tile.shape) ||
-            (right!.color != tile.color && right!.shape != tile.shape)
-        ) {
-            return false
-        }
-        
-        if above != nil && (
-            (above!.color == tile.color && above!.shape == tile.shape) ||
-            (above!.color != tile.color && above!.shape != tile.shape)
-        ) {
-            return false
-        }
-        
-        if below != nil && (
-            (below!.color == tile.color && below!.shape == tile.shape) ||
-            (below!.color != tile.color && below!.shape != tile.shape)
-        ) {
-            return false
-        }
-        
-        for neighbor in leftNeighbors(row: row, column: column) {
+        for neighbor in leftTiles {
             if neighbor.color == tile.color && neighbor.shape == tile.shape {
                 return false
             }
         }
         
-        for neighbor in rightNeighbors(row: row, column: column) {
+        for neighbor in rightTiles {
             if neighbor.color == tile.color && neighbor.shape == tile.shape {
                 return false
             }
         }
         
-        for neighbor in aboveNeighbors(row: row, column: column) {
+        for neighbor in aboveTiles {
             if neighbor.color == tile.color && neighbor.shape == tile.shape {
                 return false
             }
         }
         
-        for neighbor in belowNeighbors(row: row, column: column) {
+        for neighbor in belowTiles {
             if neighbor.color == tile.color && neighbor.shape == tile.shape {
                 return false
             }
+        }
+        
+        if !checkDirection(neighbors: leftTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: rightTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: aboveTiles, tile: tile) {
+            return false
+        }
+        
+        if !checkDirection(neighbors: belowTiles, tile: tile) {
+            return false
         }
         
         squares[row][column] = tile
