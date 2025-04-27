@@ -9,7 +9,7 @@ import SpriteKit
 
 class GameScene: SKScene {
     
-    var cameraNode: SKCameraNode!
+    var turnButton: SKLabelNode!
     
     let colors = [UIColor.red, UIColor.blue, UIColor.purple, UIColor.yellow, UIColor.orange, UIColor.green]
     var displayBoard: DisplayBoardType = .init()
@@ -22,9 +22,6 @@ class GameScene: SKScene {
     let playerRackBox = SKShapeNode(rectOf: CGSize(width: 750, height: 135))
     
     override func didMove(to view: SKView) {
-        cameraNode = SKCameraNode()
-        self.addChild(cameraNode)
-        self.camera = cameraNode
         
         self.computerRack = TileRackType(bag: self.gameBag)
         self.playerRack = TileRackType(bag: self.gameBag)
@@ -34,6 +31,8 @@ class GameScene: SKScene {
         addChild(playerRackBox)
         
         displayPlayerRack()
+        
+        displayTurnButton()
     }
     
     func displayTile(tile: TileType, center: CGPoint, parent: SKNode) {
@@ -43,20 +42,30 @@ class GameScene: SKScene {
     
     func displayPlayerRack() {
         for i in 0...playerRack.MAX_NUMBER_OF_TILES - 1 {
-            let tile = playerRack.tiles[i]
-            
-            if tile != nil {
-                let x = displayBoard.MINX + 100 + displayBoard.TILESIZE * Double(i)
-                displayTile(tile: tile!, center: CGPoint(x: CGFloat(x), y: 20), parent: playerRackBox)
-            }
+            displayTileInPlayerRack(index: i)
         }
+    }
+    
+    func displayTileInPlayerRack(index: Int) {
+        let tile = playerRack.tiles[index]
+        
+        if tile != nil {
+            let x = displayBoard.MINX + 160 + displayBoard.TILESIZE * Double(index)
+            displayTile(tile: tile!, center: CGPoint(x: CGFloat(x), y: 20), parent: playerRackBox)
+        }
+    }
+    
+    func displayTurnButton() {
+        turnButton = SKLabelNode(fontNamed: "Chalkduster")
+        turnButton.text = "Done"
+        turnButton.position = CGPoint(x: 275, y: -470)
+        turnButton.fontSize = 25
+        addChild(turnButton)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let clickLocation = touch.location(in: self)
-        
-        
         
         let nodes = self.nodes(at: clickLocation)
         if nodes.count == 0 {
@@ -69,6 +78,7 @@ class GameScene: SKScene {
                 if wasTilePlaced {
                     displayTile(tile: pickedTile!, center: tileLocation, parent: self)
                     playerRackBox.removeChildren(in: [selectedPlayerTile!])
+                    playerRack.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
                 }
             }
@@ -82,6 +92,12 @@ class GameScene: SKScene {
                     selectedPlayerTile?.removeGlow()
                     selectedPlayerTile = displayTile
                     selectedPlayerTile!.addGlow(radius: 30)
+                }
+                else if node == turnButton {
+                    let replenishedIndices = playerRack.replenish()
+                    for index in replenishedIndices {
+                        displayTileInPlayerRack(index: index)
+                    }
                 }
             }
         }

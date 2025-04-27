@@ -5,7 +5,10 @@
 //  Created by Sanya Arora on 1/21/25.
 //
 
-class TileType: CustomStringConvertible {
+class TileType: CustomStringConvertible, Equatable {
+    static func == (lhs: TileType, rhs: TileType) -> Bool {
+        return lhs.color == rhs.color && lhs.shape == rhs.shape
+    }
     
     enum ShapeType: String, CaseIterable {
         case square = "Square",
@@ -37,6 +40,7 @@ class TileType: CustomStringConvertible {
     var color: ColorType
     var width: Int = 50
     var height: Int = 50
+    var indexInRack: Int? = nil
     
     init(requestedShape: ShapeType, requestedColor: ColorType) {
         shape = requestedShape

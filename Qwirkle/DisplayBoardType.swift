@@ -57,7 +57,6 @@ struct DisplayBoardType {
             neighbors.append(tile)
             nextColumn -= 1
         }
-        print("left neighbors: \(neighbors)")
         return neighbors
     }
     
@@ -68,10 +67,9 @@ struct DisplayBoardType {
             neighbors.append(tile)
             nextColumn += 1
         }
-        print("right neighbors: \(neighbors)")
         return neighbors
     }
-    
+
     func aboveNeighbors(row: Int, column: Int) -> [TileType] {
         var neighbors = [TileType]()
         var nextRow = row
@@ -79,7 +77,6 @@ struct DisplayBoardType {
             neighbors.append(tile)
             nextRow += 1
         }
-        print("up neighbors: \(neighbors)")
         return neighbors
     }
     
@@ -90,7 +87,6 @@ struct DisplayBoardType {
             neighbors.append(tile)
             nextRow -= 1
         }
-        print("down neighbors: \(neighbors)")
         return neighbors
     }
     
