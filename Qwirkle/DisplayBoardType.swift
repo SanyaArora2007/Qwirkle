@@ -8,6 +8,17 @@
 import SwiftUI
 
 struct DisplayBoardType {
+    
+    struct Coordinate {
+        var row: Int = 0
+        var column: Int = 0
+        
+        init(row: Int, column: Int) {
+            self.row = row
+            self.column = column
+        }
+    }
+    
     let MINX: Double = -375.0
     let MAXX: Double = 375.0
     let MINY: Double = -667.0
@@ -208,11 +219,10 @@ struct DisplayBoardType {
             return false
         }
         
+        tile.positionOnGameBoard = Coordinate(row: row, column: column)
         squares[row][column] = tile
         isBoardEmpty = false
-        
-        print("row: \(row), column: \(column)")
-                
+                        
         return true
     }
     
