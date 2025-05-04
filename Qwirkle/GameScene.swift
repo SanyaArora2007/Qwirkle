@@ -10,6 +10,8 @@ import SpriteKit
 class GameScene: SKScene {
     
     var turnButton: SKLabelNode!
+    var scoreLabel: SKLabelNode!
+
     
     let colors = [UIColor.red, UIColor.blue, UIColor.purple, UIColor.yellow, UIColor.orange, UIColor.green]
     var displayBoard: DisplayBoardType = .init()
@@ -33,6 +35,8 @@ class GameScene: SKScene {
         displayPlayerRack()
         
         displayTurnButton()
+        
+        displayScoreLabel()
     }
     
     func displayTile(tile: TileType, center: CGPoint, parent: SKNode) {
@@ -63,6 +67,14 @@ class GameScene: SKScene {
         addChild(turnButton)
     }
     
+    func displayScoreLabel() {
+        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        scoreLabel.text = "Score: \(displayBoard.playerScore)"
+        scoreLabel.position = CGPoint(x: 240, y: 450)
+        scoreLabel.fontSize = 25
+        addChild(scoreLabel)
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let clickLocation = touch.location(in: self)
@@ -80,6 +92,7 @@ class GameScene: SKScene {
                     playerRackBox.removeChildren(in: [selectedPlayerTile!])
                     playerRack.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
+                    scoreLabel.text = "Score: \(displayBoard.playerScore)"
                 }
             }
         }
@@ -95,6 +108,7 @@ class GameScene: SKScene {
                 }
                 else if node == turnButton {
                     let replenishedIndices = playerRack.replenish()
+                    displayBoard.turnCompleted()
                     for index in replenishedIndices {
                         displayTileInPlayerRack(index: index)
                     }

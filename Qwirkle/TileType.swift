@@ -42,6 +42,7 @@ class TileType: CustomStringConvertible, Equatable {
     var height: Int = 50
     var indexInRack: Int? = nil
     var positionOnGameBoard: DisplayBoardType.Coordinate? = nil
+    var placedInCurrentTurn: Bool = false
     
     init(requestedShape: ShapeType, requestedColor: ColorType) {
         shape = requestedShape

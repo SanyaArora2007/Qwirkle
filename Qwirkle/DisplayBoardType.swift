@@ -27,6 +27,8 @@ struct DisplayBoardType {
     let TOTAL_NUMBER_OF_TILES: Int = 108
     var squares = [[TileType?]]()
     var isBoardEmpty: Bool = true
+    var playerScore: Int = 0
+    var tilesInCurrentTurn: [TileType] = []
     
     init() {
         let rowOfSquares = [TileType?](repeating: nil, count: TOTAL_NUMBER_OF_TILES)
@@ -220,10 +222,98 @@ struct DisplayBoardType {
         }
         
         tile.positionOnGameBoard = Coordinate(row: row, column: column)
+        tile.placedInCurrentTurn = true
+        calculateScore(row: row, column: column)
         squares[row][column] = tile
+        tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
                         
         return true
+    }
+    
+    mutating func calculateScore(row: Int, column: Int) {
+        var numberOfPreviousLeftNeighbors = 0
+        let leftNeighbors = leftNeighbors(row: row, column: column)
+        for neighbor in leftNeighbors {
+            if neighbor.placedInCurrentTurn == false {
+                numberOfPreviousLeftNeighbors += 1
+            }
+            else {
+                break
+            }
+        }
+        if numberOfPreviousLeftNeighbors > 0  {
+            playerScore += (numberOfPreviousLeftNeighbors + 1)
+        }
+        
+        print("left: \(numberOfPreviousLeftNeighbors)")
+        
+        var numberOfPreviousRightNeighbors = 0
+        let rightNeighbors = rightNeighbors(row: row, column: column)
+        for neighbor in rightNeighbors {
+            if neighbor.placedInCurrentTurn == false {
+                numberOfPreviousRightNeighbors += 1
+            }
+            else {
+                break
+            }
+        }
+        if numberOfPreviousRightNeighbors > 0  {
+            playerScore += (numberOfPreviousRightNeighbors + 1)
+        }
+        
+        print("right: \(numberOfPreviousRightNeighbors)")
+
+        
+        var numberOfPreviousAboveNeighbors = 0
+        let aboveNeighbors = aboveNeighbors(row: row, column: column)
+        for neighbor in aboveNeighbors {
+            if neighbor.placedInCurrentTurn == false {
+                numberOfPreviousAboveNeighbors += 1
+            }
+            else {
+                break
+            }
+        }
+        if numberOfPreviousAboveNeighbors > 0  {
+            playerScore += (numberOfPreviousAboveNeighbors + 1)
+        }
+        
+        print("Above: \(numberOfPreviousAboveNeighbors)")
+
+        
+        var numberOfPreviousBelowNeighbors = 0
+        let belowNeighbors = belowNeighbors(row: row, column: column)
+        for neighbor in belowNeighbors {
+            if neighbor.placedInCurrentTurn == false {
+                numberOfPreviousBelowNeighbors += 1
+            }
+            else {
+                break
+            }
+        }
+        if numberOfPreviousBelowNeighbors > 0  {
+            playerScore += (numberOfPreviousBelowNeighbors + 1)
+        }
+        
+        print("Below: \(numberOfPreviousBelowNeighbors)")
+        
+        if numberOfPreviousLeftNeighbors == 0 &&
+            numberOfPreviousRightNeighbors == 0 &&
+            numberOfPreviousAboveNeighbors == 0 &&
+            numberOfPreviousBelowNeighbors == 0 {
+            playerScore += 1
+        }
+        
+        print("Score: \(playerScore)")
+
+    }
+    
+    mutating func turnCompleted() {
+        for tile in tilesInCurrentTurn {
+            tile.placedInCurrentTurn = false
+        }
+        tilesInCurrentTurn.removeAll()
     }
     
     func determinPositionToSnap(clickLocation: CGPoint) -> CGPoint {
