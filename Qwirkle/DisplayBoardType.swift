@@ -245,9 +245,7 @@ struct DisplayBoardType {
         if numberOfPreviousLeftNeighbors > 0  {
             playerScore += (numberOfPreviousLeftNeighbors + 1)
         }
-        
-        print("left: \(numberOfPreviousLeftNeighbors)")
-        
+            
         var numberOfPreviousRightNeighbors = 0
         let rightNeighbors = rightNeighbors(row: row, column: column)
         for neighbor in rightNeighbors {
@@ -261,9 +259,6 @@ struct DisplayBoardType {
         if numberOfPreviousRightNeighbors > 0  {
             playerScore += (numberOfPreviousRightNeighbors + 1)
         }
-        
-        print("right: \(numberOfPreviousRightNeighbors)")
-
         
         var numberOfPreviousAboveNeighbors = 0
         let aboveNeighbors = aboveNeighbors(row: row, column: column)
@@ -279,9 +274,6 @@ struct DisplayBoardType {
             playerScore += (numberOfPreviousAboveNeighbors + 1)
         }
         
-        print("Above: \(numberOfPreviousAboveNeighbors)")
-
-        
         var numberOfPreviousBelowNeighbors = 0
         let belowNeighbors = belowNeighbors(row: row, column: column)
         for neighbor in belowNeighbors {
@@ -295,9 +287,7 @@ struct DisplayBoardType {
         if numberOfPreviousBelowNeighbors > 0  {
             playerScore += (numberOfPreviousBelowNeighbors + 1)
         }
-        
-        print("Below: \(numberOfPreviousBelowNeighbors)")
-        
+            
         if numberOfPreviousLeftNeighbors == 0 &&
             numberOfPreviousRightNeighbors == 0 &&
             numberOfPreviousAboveNeighbors == 0 &&
@@ -305,8 +295,21 @@ struct DisplayBoardType {
             playerScore += 1
         }
         
-        print("Score: \(playerScore)")
-
+        if leftNeighbors.count == 5 {
+            playerScore += 6
+        }
+        
+        if rightNeighbors.count == 5 {
+            playerScore += 6
+        }
+        
+        if aboveNeighbors.count == 5 {
+            playerScore += 6
+        }
+        
+        if belowNeighbors.count == 5 {
+            playerScore += 6
+        }
     }
     
     mutating func turnCompleted() {
