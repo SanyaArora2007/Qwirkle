@@ -24,4 +24,9 @@ class Bag {
         let randomInt = Int.random(in: 0...tiles.count - 1)
         return tiles.remove(at: randomInt)
     }
+    
+    func returnTile(tile: TileType) {
+        tiles.append(tile)
+        tile.indexInRack = nil
+    }
 }

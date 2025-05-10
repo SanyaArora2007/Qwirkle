@@ -107,7 +107,13 @@ class GameScene: SKScene {
                     selectedPlayerTile!.addGlow(radius: 30)
                 }
                 else if node == turnButton {
-                    let replenishedIndices = playerRack.replenish()
+                    var replenishedIndices = playerRack.replenish()
+                    if replenishedIndices.count == 0 {
+                        playerRackBox.removeAllChildren()
+                        replenishedIndices = playerRack.replenishAllTiles()
+                        displayBoard.playerScore -= 5
+                        scoreLabel.text = "Score: \(displayBoard.playerScore)"
+                    }
                     displayBoard.turnCompleted()
                     for index in replenishedIndices {
                         displayTileInPlayerRack(index: index)

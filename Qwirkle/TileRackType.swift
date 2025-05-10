@@ -39,4 +39,19 @@ class TileRackType {
         }
         return replenishedIndices
     }
+    
+    func replenishAllTiles() -> [Int] {
+        var replenishedIndices: [Int] = []
+        if gameBag != nil {
+            for index in 0...MAX_NUMBER_OF_TILES - 1 {
+                if tiles[index] != nil {
+                    gameBag!.returnTile(tile: tiles[index]!)
+                    tiles[index] = gameBag!.pickRandom()
+                    tiles[index]!.indexInRack = index
+                    replenishedIndices.append(index)
+                }
+            }
+        }
+        return replenishedIndices
+    }
 }
