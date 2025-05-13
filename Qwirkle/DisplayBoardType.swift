@@ -154,7 +154,7 @@ struct DisplayBoardType {
         return true
     }
     
-    mutating func placeTile(tile: TileType, row: Int, column: Int) -> Bool {
+    func canPlaceTile(tile: TileType, row: Int, column: Int) -> Bool {
         if row >= TOTAL_NUMBER_OF_TILES {
             return false
         }
@@ -220,16 +220,23 @@ struct DisplayBoardType {
         if !checkDirection(neighbors: belowTiles, tile: tile) {
             return false
         }
-        
+        return true
+    }
+    
+    mutating func placeTile(tile: TileType ,row: Int, column: Int) -> Bool {
+        if !canPlaceTile(tile: tile, row: row, column: column) {
+            return false
+        }
         tile.positionOnGameBoard = Coordinate(row: row, column: column)
         tile.placedInCurrentTurn = true
         calculateScore(row: row, column: column)
         squares[row][column] = tile
         tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
-                        
+        
         return true
     }
+      
     
     mutating func calculateScore(row: Int, column: Int) {
         var numberOfPreviousLeftNeighbors = 0
