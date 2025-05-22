@@ -30,7 +30,7 @@ class ComputerPlayer {
                     if displayBoard.canPlaceTile(tile: tile!, row: row, column: column) {
                         let tileLocation = displayBoard.determinePositionToSnapByRowAndColumn(row: row, column: column)
                         let _ = displayBoard.placeTile(tile: tile!, row: row, column: column, playersTurn: false)
-                        gameScene.computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+                        gameScene.updateComputerScoreLabel()
                         gameScene.displayTile(tile: tile!, center: tileLocation, parent: gameScene)
                         computerRack.remove(index: tile!.indexInRack!)
                         tilePlaced += 1

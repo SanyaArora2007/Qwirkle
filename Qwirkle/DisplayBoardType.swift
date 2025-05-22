@@ -354,9 +354,7 @@ class DisplayBoardType {
         let snapx = MINX + (TILESIZE / 2) + (TILESIZE * Double(column))
         let snapy = MINY + (TILESIZE / 2) + (TILESIZE * Double(row))
         let snapLocation = CGPoint(x: snapx, y: snapy)
-        
-        print("coordinatE: \(snapLocation)")
-        
+                
         return snapLocation
     }
     

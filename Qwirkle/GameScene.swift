@@ -85,6 +85,15 @@ class GameScene: SKScene {
         addChild(computerScoreLabel)
     }
     
+    func updatePlayerScoreLabel() {
+        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+    }
+    
+    func updateComputerScoreLabel() {
+        computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let clickLocation = touch.location(in: self)
@@ -102,7 +111,7 @@ class GameScene: SKScene {
                     playerRackBox.removeChildren(in: [selectedPlayerTile!])
                     playerRack.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
-                    playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+                    updatePlayerScoreLabel()
                 }
             }
         }
@@ -122,7 +131,7 @@ class GameScene: SKScene {
                         playerRackBox.removeAllChildren()
                         replenishedIndices = playerRack.replenishAllTiles()
                         displayBoard.playerScore -= 5
-                        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+                        updatePlayerScoreLabel()
                     }
                     displayBoard.turnCompleted()
                     for index in replenishedIndices {
