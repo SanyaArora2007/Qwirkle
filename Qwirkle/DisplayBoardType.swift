@@ -29,6 +29,7 @@ class DisplayBoardType {
     var squares = [[TileType?]]()
     var isBoardEmpty: Bool = true
     var playerScore: Int = 0
+    var computerScore: Int = 0
     var tilesInCurrentTurn: [TileType] = []
     
     init() {
@@ -224,13 +225,18 @@ class DisplayBoardType {
         return true
     }
     
-    func placeTile(tile: TileType ,row: Int, column: Int) -> Bool {
+    func placeTile(tile: TileType ,row: Int, column: Int, playersTurn: Bool) -> Bool {
         if !canPlaceTile(tile: tile, row: row, column: column) {
             return false
         }
         tile.positionOnGameBoard = Coordinate(row: row, column: column)
         tile.placedInCurrentTurn = true
-        updateScore(row: row, column: column)
+        if playersTurn == true {
+            updatePlayerScore(row: row, column: column)
+        }
+        else {
+            updateComputerScore(row: row, column: column)
+        }
         squares[row][column] = tile
         tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
@@ -324,8 +330,12 @@ class DisplayBoardType {
         return score
     }
     
-    func updateScore(row: Int, column: Int) {
+    func updatePlayerScore(row: Int, column: Int) {
         playerScore += calculateScore(row: row, column: column)
+    }
+    
+    func updateComputerScore(row: Int, column: Int) {
+        computerScore += calculateScore(row: row, column: column)
     }
     
     func turnCompleted() {
