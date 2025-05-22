@@ -28,18 +28,18 @@ class TileType: CustomStringConvertible, Equatable {
     }
     
     let shapeSizes = [
-                    ShapeType.star4: (95, 95),
-                    ShapeType.square: (35, 35),
-                    ShapeType.diamond: (55, 55),
-                    ShapeType.circle: (40, 40),
-                    ShapeType.star8: (45, 45),
-                    ShapeType.clover: (50, 50)
+                    ShapeType.star4: (85, 85),
+                    ShapeType.square: (25, 25),
+                    ShapeType.diamond: (45, 45),
+                    ShapeType.circle: (30, 30),
+                    ShapeType.star8: (35, 35),
+                    ShapeType.clover: (40, 40)
                 ]
     
     var shape: ShapeType
     var color: ColorType
-    var width: Int = 50
-    var height: Int = 50
+    var width: Int = 40
+    var height: Int = 40
     var indexInRack: Int? = nil
     var positionOnGameBoard: DisplayBoardType.Coordinate? = nil
     var placedInCurrentTurn: Bool = false

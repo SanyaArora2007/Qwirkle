@@ -21,18 +21,19 @@ class DisplayBoardType {
     
     let MINX: Double = -375.0
     let MAXX: Double = 375.0
-    let MINY: Double = -667.0
-    let MAXY: Double = 667.0
-    let TILESIZE: Double = 70
-    let TOTAL_NUMBER_OF_TILES: Int = 108
+    let MINY: Double = -397.0
+    let MAXY: Double = 397.0
+    let TILESIZE: Double = 60
+    let NUMROWS: Int = 14
+    let NUMCOLUMNS: Int = 12
     var squares = [[TileType?]]()
     var isBoardEmpty: Bool = true
     var playerScore: Int = 0
     var tilesInCurrentTurn: [TileType] = []
     
     init() {
-        let rowOfSquares = [TileType?](repeating: nil, count: TOTAL_NUMBER_OF_TILES)
-        squares = [[TileType?]](repeating: rowOfSquares, count: TOTAL_NUMBER_OF_TILES)
+        let rowOfSquares = [TileType?](repeating: nil, count: NUMCOLUMNS)
+        squares = [[TileType?]](repeating: rowOfSquares, count: NUMROWS)
     }
     
     func tileToLeft(row: Int, column: Int) -> TileType? {
@@ -43,14 +44,14 @@ class DisplayBoardType {
     }
     
     func tileToRight(row: Int, column: Int) -> TileType? {
-        if column == TOTAL_NUMBER_OF_TILES - 1 {
+        if column == NUMCOLUMNS - 1 {
             return nil
         }
         return squares[row][column + 1]
     }
     
     func tileAbove(row: Int, column: Int) -> TileType? {
-        if row == TOTAL_NUMBER_OF_TILES - 1 {
+        if row == NUMROWS - 1 {
             return nil
         }
         return squares[row + 1][column]
@@ -155,11 +156,11 @@ class DisplayBoardType {
     }
     
     func canPlaceTile(tile: TileType, row: Int, column: Int) -> Bool {
-        if row >= TOTAL_NUMBER_OF_TILES {
+        if row >= NUMROWS {
             return false
         }
         
-        if column >= TOTAL_NUMBER_OF_TILES {
+        if column >= NUMCOLUMNS {
             return false
         }
         
@@ -233,6 +234,8 @@ class DisplayBoardType {
         squares[row][column] = tile
         tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
+        
+        print("(\(row), \(column))")
         
         return true
     }
@@ -341,6 +344,8 @@ class DisplayBoardType {
         let snapx = MINX + (TILESIZE / 2) + (TILESIZE * Double(column))
         let snapy = MINY + (TILESIZE / 2) + (TILESIZE * Double(row))
         let snapLocation = CGPoint(x: snapx, y: snapy)
+        
+        print("coordinatE: \(snapLocation)")
         
         return snapLocation
     }

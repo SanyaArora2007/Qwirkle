@@ -54,7 +54,7 @@ class GameScene: SKScene {
         let tile = playerRack.tiles[index]
         
         if tile != nil {
-            let x = displayBoard.MINX + 160 + displayBoard.TILESIZE * Double(index)
+            let x = displayBoard.MINX + 170 + displayBoard.TILESIZE * Double(index)
             displayTile(tile: tile!, center: CGPoint(x: CGFloat(x), y: 20), parent: playerRackBox)
         }
     }

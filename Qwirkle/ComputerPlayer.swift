@@ -25,8 +25,8 @@ class ComputerPlayer {
             if tile == nil {
                 continue
             }
-            for row in 0...displayBoard.TOTAL_NUMBER_OF_TILES - 1 {
-                for column in 0...displayBoard.TOTAL_NUMBER_OF_TILES - 1 {
+            for row in 0...displayBoard.NUMROWS - 1 {
+                for column in 0...displayBoard.NUMCOLUMNS - 1 {
                     if displayBoard.canPlaceTile(tile: tile!, row: row, column: column) {
                         let tileLocation = displayBoard.determinePositionToSnapByRowAndColumn(row: row, column: column)
                         let _ = displayBoard.placeTile(tile: tile!, row: row, column: column)
