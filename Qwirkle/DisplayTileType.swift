@@ -11,7 +11,7 @@ class DisplayTileType: SKShapeNode {
     var glow: SKEffectNode? = nil
     
     convenience init(inputTile: TileType, location: CGPoint) {
-        self.init(rectOf: CGSize(width: 69, height: 69))
+        self.init(rectOf: CGSize(width: 59, height: 59))
         self.tile = inputTile
         
         self.position = location

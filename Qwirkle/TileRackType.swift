@@ -30,6 +30,9 @@ class TileRackType {
         var replenishedIndices: [Int] = []
         if gameBag != nil {
             for index in 0...MAX_NUMBER_OF_TILES - 1 {
+                if gameBag!.tiles.count == 0 {
+                    break
+                }
                 if tiles[index] == nil {
                     tiles[index] = gameBag!.pickRandom()
                     tiles[index]!.indexInRack = index
@@ -44,6 +47,9 @@ class TileRackType {
         var replenishedIndices: [Int] = []
         if gameBag != nil {
             for index in 0...MAX_NUMBER_OF_TILES - 1 {
+                if gameBag!.tiles.count == 0 {
+                    break
+                }
                 if tiles[index] != nil {
                     gameBag!.returnTile(tile: tiles[index]!)
                     tiles[index] = gameBag!.pickRandom()

@@ -10,8 +10,9 @@ import SpriteKit
 class GameScene: SKScene {
     
     var turnButton: SKLabelNode!
-    var scoreLabel: SKLabelNode!
-
+    var playerScoreLabel: SKLabelNode!
+    var computerScoreLabel: SKLabelNode!
+    var gameOverLabel: SKLabelNode!
     
     let colors = [UIColor.red, UIColor.blue, UIColor.purple, UIColor.yellow, UIColor.orange, UIColor.green]
     var displayBoard: DisplayBoardType = .init()
@@ -36,7 +37,9 @@ class GameScene: SKScene {
         
         displayTurnButton()
         
-        displayScoreLabel()
+        displayPlayerScoreLabel()
+        displayComputerScoreLabel()
+
     }
     
     func displayTile(tile: TileType, center: CGPoint, parent: SKNode) {
@@ -54,7 +57,7 @@ class GameScene: SKScene {
         let tile = playerRack.tiles[index]
         
         if tile != nil {
-            let x = displayBoard.MINX + 160 + displayBoard.TILESIZE * Double(index)
+            let x = displayBoard.MINX + 170 + displayBoard.TILESIZE * Double(index)
             displayTile(tile: tile!, center: CGPoint(x: CGFloat(x), y: 20), parent: playerRackBox)
         }
     }
@@ -67,12 +70,47 @@ class GameScene: SKScene {
         addChild(turnButton)
     }
     
-    func displayScoreLabel() {
-        scoreLabel = SKLabelNode(fontNamed: "Chalkduster")
-        scoreLabel.text = "Score: \(displayBoard.playerScore)"
-        scoreLabel.position = CGPoint(x: 240, y: 450)
-        scoreLabel.fontSize = 25
-        addChild(scoreLabel)
+    func displayPlayerScoreLabel() {
+        playerScoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+        playerScoreLabel.position = CGPoint(x: 240, y: 460)
+        playerScoreLabel.fontSize = 25
+        addChild(playerScoreLabel)
+    }
+    
+    func displayComputerScoreLabel() {
+        computerScoreLabel = SKLabelNode(fontNamed: "Chalkduster")
+        computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+        computerScoreLabel.position = CGPoint(x: -230, y: 460)
+        computerScoreLabel.fontSize = 25
+        addChild(computerScoreLabel)
+    }
+    
+    func updatePlayerScoreLabel() {
+        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+    }
+    
+    func updateComputerScoreLabel() {
+        computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+
+    }
+    
+    func gameOver() {
+        self.removeAllChildren()
+        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+        playerScoreLabel.fontSize = 30
+        playerScoreLabel.position = CGPoint(x: 200, y: 0)
+        addChild(playerScoreLabel)
+        computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+        computerScoreLabel.fontSize = 30
+        computerScoreLabel.position = CGPoint(x: -175, y: 0)
+        addChild(computerScoreLabel)
+        gameOverLabel = SKLabelNode(fontNamed: "Chalkduster")
+        gameOverLabel.text = "GAME OVER"
+        gameOverLabel.fontColor = .red
+        gameOverLabel.fontSize = 60
+        gameOverLabel.position = CGPoint(x: 0, y: 200)
+        addChild(gameOverLabel)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -86,13 +124,13 @@ class GameScene: SKScene {
             let (row, column) = displayBoard.determineRowAndColumn(clickLocation: clickLocation)
             if selectedPlayerTile != nil {
                 let pickedTile = selectedPlayerTile!.tile
-                let wasTilePlaced = displayBoard.placeTile(tile: pickedTile!, row: row, column: column)
+                let wasTilePlaced = displayBoard.placeTile(tile: pickedTile!, row: row, column: column, playersTurn: true)
                 if wasTilePlaced {
                     displayTile(tile: pickedTile!, center: tileLocation, parent: self)
                     playerRackBox.removeChildren(in: [selectedPlayerTile!])
                     playerRack.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
-                    scoreLabel.text = "Score: \(displayBoard.playerScore)"
+                    updatePlayerScoreLabel()
                 }
             }
         }
@@ -108,19 +146,24 @@ class GameScene: SKScene {
                 }
                 else if node == turnButton {
                     var replenishedIndices = playerRack.replenish()
-                    if replenishedIndices.count == 0 {
+                    if replenishedIndices.count == 0 && gameBag.tiles.count != 0 {
                         playerRackBox.removeAllChildren()
                         replenishedIndices = playerRack.replenishAllTiles()
                         displayBoard.playerScore -= 5
-                        scoreLabel.text = "Score: \(displayBoard.playerScore)"
+                        updatePlayerScoreLabel()
                     }
                     displayBoard.turnCompleted()
                     for index in replenishedIndices {
                         displayTileInPlayerRack(index: index)
                     }
                     computer?.play()
+                    displayBoard.turnCompleted()
                 }
             }
+        }
+        
+        if gameBag.tiles.count == 0 {
+            gameOver()
         }
     }
 }
