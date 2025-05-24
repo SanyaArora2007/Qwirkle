@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DisplayBoardType {
+class DisplayBoardType {
     
     struct Coordinate {
         var row: Int = 0
@@ -50,14 +50,14 @@ struct DisplayBoardType {
     }
     
     func tileAbove(row: Int, column: Int) -> TileType? {
-        if row == 0 {
+        if row == TOTAL_NUMBER_OF_TILES - 1 {
             return nil
         }
         return squares[row + 1][column]
     }
     
     func tileBelow(row: Int, column: Int) -> TileType? {
-        if row == TOTAL_NUMBER_OF_TILES - 1 {
+        if row == 0 {
             return nil
         }
         return squares[row - 1][column]
@@ -154,7 +154,7 @@ struct DisplayBoardType {
         return true
     }
     
-    mutating func placeTile(tile: TileType, row: Int, column: Int) -> Bool {
+    func canPlaceTile(tile: TileType, row: Int, column: Int) -> Bool {
         if row >= TOTAL_NUMBER_OF_TILES {
             return false
         }
@@ -220,19 +220,27 @@ struct DisplayBoardType {
         if !checkDirection(neighbors: belowTiles, tile: tile) {
             return false
         }
-        
-        tile.positionOnGameBoard = Coordinate(row: row, column: column)
-        tile.placedInCurrentTurn = true
-        calculateScore(row: row, column: column)
-        squares[row][column] = tile
-        tilesInCurrentTurn.append(tile)
-        isBoardEmpty = false
-                        
         return true
     }
     
-    mutating func calculateScore(row: Int, column: Int) {
+    func placeTile(tile: TileType ,row: Int, column: Int) -> Bool {
+        if !canPlaceTile(tile: tile, row: row, column: column) {
+            return false
+        }
+        tile.positionOnGameBoard = Coordinate(row: row, column: column)
+        tile.placedInCurrentTurn = true
+        updateScore(row: row, column: column)
+        squares[row][column] = tile
+        tilesInCurrentTurn.append(tile)
+        isBoardEmpty = false
+        
+        return true
+    }
+      
+    
+    func calculateScore(row: Int, column: Int) -> Int {
         var numberOfPreviousLeftNeighbors = 0
+        var score = 0
         let leftNeighbors = leftNeighbors(row: row, column: column)
         for neighbor in leftNeighbors {
             if neighbor.placedInCurrentTurn == false {
@@ -243,7 +251,7 @@ struct DisplayBoardType {
             }
         }
         if numberOfPreviousLeftNeighbors > 0  {
-            playerScore += (numberOfPreviousLeftNeighbors + 1)
+            score += (numberOfPreviousLeftNeighbors + 1)
         }
             
         var numberOfPreviousRightNeighbors = 0
@@ -257,7 +265,7 @@ struct DisplayBoardType {
             }
         }
         if numberOfPreviousRightNeighbors > 0  {
-            playerScore += (numberOfPreviousRightNeighbors + 1)
+            score += (numberOfPreviousRightNeighbors + 1)
         }
         
         var numberOfPreviousAboveNeighbors = 0
@@ -271,7 +279,7 @@ struct DisplayBoardType {
             }
         }
         if numberOfPreviousAboveNeighbors > 0  {
-            playerScore += (numberOfPreviousAboveNeighbors + 1)
+            score += (numberOfPreviousAboveNeighbors + 1)
         }
         
         var numberOfPreviousBelowNeighbors = 0
@@ -285,34 +293,39 @@ struct DisplayBoardType {
             }
         }
         if numberOfPreviousBelowNeighbors > 0  {
-            playerScore += (numberOfPreviousBelowNeighbors + 1)
+            score += (numberOfPreviousBelowNeighbors + 1)
         }
             
         if numberOfPreviousLeftNeighbors == 0 &&
             numberOfPreviousRightNeighbors == 0 &&
             numberOfPreviousAboveNeighbors == 0 &&
             numberOfPreviousBelowNeighbors == 0 {
-            playerScore += 1
+            score += 1
         }
         
         if leftNeighbors.count == 5 {
-            playerScore += 6
+            score += 6
         }
         
         if rightNeighbors.count == 5 {
-            playerScore += 6
+            score += 6
         }
         
         if aboveNeighbors.count == 5 {
-            playerScore += 6
+            score += 6
         }
         
         if belowNeighbors.count == 5 {
-            playerScore += 6
+            score += 6
         }
+        return score
     }
     
-    mutating func turnCompleted() {
+    func updateScore(row: Int, column: Int) {
+        playerScore += calculateScore(row: row, column: column)
+    }
+    
+    func turnCompleted() {
         for tile in tilesInCurrentTurn {
             tile.placedInCurrentTurn = false
         }
@@ -321,6 +334,10 @@ struct DisplayBoardType {
     
     func determinPositionToSnap(clickLocation: CGPoint) -> CGPoint {
         let (row, column) = determineRowAndColumn(clickLocation: clickLocation)
+        return determinePositionToSnapByRowAndColumn(row: row, column: column)
+    }
+    
+    func determinePositionToSnapByRowAndColumn(row: Int, column: Int) -> CGPoint {
         let snapx = MINX + (TILESIZE / 2) + (TILESIZE * Double(column))
         let snapy = MINY + (TILESIZE / 2) + (TILESIZE * Double(row))
         let snapLocation = CGPoint(x: snapx, y: snapy)

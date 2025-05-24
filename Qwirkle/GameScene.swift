@@ -17,15 +17,15 @@ class GameScene: SKScene {
     var displayBoard: DisplayBoardType = .init()
     
     var gameBag: Bag = .init()
-    var computerRack: TileRackType = .init()
     var playerRack: TileRackType = .init()
     var selectedPlayerTile: DisplayTileType? = nil
+    var computer: ComputerPlayer? = nil
     
     let playerRackBox = SKShapeNode(rectOf: CGSize(width: 750, height: 135))
     
     override func didMove(to view: SKView) {
         
-        self.computerRack = TileRackType(bag: self.gameBag)
+        self.computer = ComputerPlayer(board: self.displayBoard ,bag: self.gameBag, game: self)
         self.playerRack = TileRackType(bag: self.gameBag)
         
         playerRackBox.position = CGPoint(x: 0, y: -480)
@@ -118,6 +118,7 @@ class GameScene: SKScene {
                     for index in replenishedIndices {
                         displayTileInPlayerRack(index: index)
                     }
+                    computer?.play()
                 }
             }
         }
