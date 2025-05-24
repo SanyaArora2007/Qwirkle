@@ -179,6 +179,9 @@ class DisplayBoardType {
         let aboveTiles = aboveNeighbors(row: row, column: column)
         let belowTiles = belowNeighbors(row: row, column: column)
         
+        let horizontalNeighbors = leftTiles + rightTiles
+        let verticalNeighbors = aboveTiles + belowTiles
+        
         if left == nil && right == nil && above == nil && below == nil && !isBoardEmpty {
             return false
         }
@@ -207,19 +210,11 @@ class DisplayBoardType {
             }
         }
         
-        if !checkDirection(neighbors: leftTiles, tile: tile) {
+        if !checkDirection(neighbors: horizontalNeighbors, tile: tile) {
             return false
         }
         
-        if !checkDirection(neighbors: rightTiles, tile: tile) {
-            return false
-        }
-        
-        if !checkDirection(neighbors: aboveTiles, tile: tile) {
-            return false
-        }
-        
-        if !checkDirection(neighbors: belowTiles, tile: tile) {
+        if !checkDirection(neighbors: verticalNeighbors, tile: tile) {
             return false
         }
         return true
