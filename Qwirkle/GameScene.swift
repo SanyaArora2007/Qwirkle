@@ -12,6 +12,7 @@ class GameScene: SKScene {
     var turnButton: SKLabelNode!
     var playerScoreLabel: SKLabelNode!
     var computerScoreLabel: SKLabelNode!
+    var gameOverLabel: SKLabelNode!
     
     let colors = [UIColor.red, UIColor.blue, UIColor.purple, UIColor.yellow, UIColor.orange, UIColor.green]
     var displayBoard: DisplayBoardType = .init()
@@ -94,6 +95,24 @@ class GameScene: SKScene {
 
     }
     
+    func gameOver() {
+        self.removeAllChildren()
+        playerScoreLabel.text = "Your Score: \(displayBoard.playerScore)"
+        playerScoreLabel.fontSize = 30
+        playerScoreLabel.position = CGPoint(x: 200, y: 0)
+        addChild(playerScoreLabel)
+        computerScoreLabel.text = "Computer Score: \(displayBoard.computerScore)"
+        computerScoreLabel.fontSize = 30
+        computerScoreLabel.position = CGPoint(x: -175, y: 0)
+        addChild(computerScoreLabel)
+        gameOverLabel = SKLabelNode(fontNamed: "Chalkduster")
+        gameOverLabel.text = "GAME OVER"
+        gameOverLabel.fontColor = .red
+        gameOverLabel.fontSize = 60
+        gameOverLabel.position = CGPoint(x: 0, y: 200)
+        addChild(gameOverLabel)
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let clickLocation = touch.location(in: self)
@@ -127,7 +146,7 @@ class GameScene: SKScene {
                 }
                 else if node == turnButton {
                     var replenishedIndices = playerRack.replenish()
-                    if replenishedIndices.count == 0 {
+                    if replenishedIndices.count == 0 && gameBag.tiles.count != 0 {
                         playerRackBox.removeAllChildren()
                         replenishedIndices = playerRack.replenishAllTiles()
                         displayBoard.playerScore -= 5
@@ -138,8 +157,13 @@ class GameScene: SKScene {
                         displayTileInPlayerRack(index: index)
                     }
                     computer?.play()
+                    displayBoard.turnCompleted()
                 }
             }
+        }
+        
+        if gameBag.tiles.count == 0 {
+            gameOver()
         }
     }
 }
