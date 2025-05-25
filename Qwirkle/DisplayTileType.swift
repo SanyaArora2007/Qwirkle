@@ -16,8 +16,8 @@ class DisplayTileType: SKShapeNode {
         
         self.position = location
         self.fillColor = .black
-        self.strokeColor = .white
-        self.lineWidth = 1
+        self.strokeColor = .lightGray
+        self.lineWidth = 2
 
         let imageName = "\(tile!.color.rawValue)\(tile!.shape.rawValue)"
         let tileShown = SKSpriteNode(imageNamed: imageName)
@@ -35,9 +35,11 @@ class DisplayTileType: SKShapeNode {
     
     func addGlow(radius: Float = 30) {
         self.lineWidth = 5
+        self.strokeColor = .white
     }
     
     func removeGlow() {
-        self.lineWidth = 1
+        self.lineWidth = 2
+        self.strokeColor = .lightGray
     }
 }

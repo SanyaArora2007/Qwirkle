@@ -236,8 +236,6 @@ class DisplayBoardType {
         tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
         
-        print("(\(row), \(column))")
-        
         return true
     }
       
