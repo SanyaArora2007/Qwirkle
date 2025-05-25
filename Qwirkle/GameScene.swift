@@ -17,30 +17,35 @@ class GameScene: SKScene {
     let colors = [UIColor.red, UIColor.blue, UIColor.purple, UIColor.yellow, UIColor.orange, UIColor.green]
     var displayBoard: DisplayBoardType = .init()
     
-    var gameBag: Bag = .init()
-    var playerRack: TileRackType = .init()
+    var gameBag: Bag? = nil
+    var playerRack: TileRackType? = nil
     var selectedPlayerTile: DisplayTileType? = nil
     var computer: ComputerPlayer? = nil
     
     let playerRackBox = SKShapeNode(rectOf: CGSize(width: 750, height: 135))
     
     override func didMove(to view: SKView) {
+        startGame()
+    }
+    
+    func startGame() {
+        self.displayBoard = DisplayBoardType()
+        self.gameBag = Bag()
+        self.selectedPlayerTile = nil
         
-        self.computer = ComputerPlayer(board: self.displayBoard ,bag: self.gameBag, game: self)
-        self.playerRack = TileRackType(bag: self.gameBag)
+        self.computer = ComputerPlayer(board: self.displayBoard ,bag: self.gameBag!, game: self)
+        self.playerRack = TileRackType(bag: self.gameBag!)
         
-        playerRackBox.position = CGPoint(x: 0, y: -480)
-        playerRackBox.fillColor = .lightGray
+        self.playerRackBox.position = CGPoint(x: 0, y: -480)
+        self.playerRackBox.fillColor = .lightGray
         addChild(playerRackBox)
         
         displayPlayerRack()
-        
         displayTurnButton()
-        
         displayPlayerScoreLabel()
         displayComputerScoreLabel()
-
     }
+    
     
     func displayTile(tile: TileType, center: CGPoint, parent: SKNode) {
         let newTile = DisplayTileType(inputTile: tile, location: center)
@@ -48,13 +53,13 @@ class GameScene: SKScene {
     }
     
     func displayPlayerRack() {
-        for i in 0...playerRack.MAX_NUMBER_OF_TILES - 1 {
+        for i in 0...playerRack!.MAX_NUMBER_OF_TILES - 1 {
             displayTileInPlayerRack(index: i)
         }
     }
     
     func displayTileInPlayerRack(index: Int) {
-        let tile = playerRack.tiles[index]
+        let tile = playerRack!.tiles[index]
         
         if tile != nil {
             let x = displayBoard.MINX + 170 + displayBoard.TILESIZE * Double(index)
@@ -128,7 +133,7 @@ class GameScene: SKScene {
                 if wasTilePlaced {
                     displayTile(tile: pickedTile!, center: tileLocation, parent: self)
                     playerRackBox.removeChildren(in: [selectedPlayerTile!])
-                    playerRack.remove(index: pickedTile!.indexInRack!)
+                    playerRack!.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
                     updatePlayerScoreLabel()
                 }
@@ -145,10 +150,10 @@ class GameScene: SKScene {
                     selectedPlayerTile!.addGlow(radius: 30)
                 }
                 else if node == turnButton {
-                    var replenishedIndices = playerRack.replenish()
-                    if replenishedIndices.count == 0 && gameBag.tiles.count != 0 {
+                    var replenishedIndices = playerRack!.replenish()
+                    if replenishedIndices.count == 0 && gameBag!.tiles.count != 0 {
                         playerRackBox.removeAllChildren()
-                        replenishedIndices = playerRack.replenishAllTiles()
+                        replenishedIndices = playerRack!.replenishAllTiles()
                         displayBoard.playerScore -= 5
                         updatePlayerScoreLabel()
                     }
@@ -162,7 +167,7 @@ class GameScene: SKScene {
             }
         }
         
-        if gameBag.tiles.count == 0 {
+        if gameBag!.tiles.count == 0 {
             gameOver()
         }
     }
