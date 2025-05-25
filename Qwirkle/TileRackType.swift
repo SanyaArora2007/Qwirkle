@@ -9,7 +9,7 @@ class TileRackType {
     let MAX_NUMBER_OF_TILES = 6
     var tiles = [TileType?]()
     var gameBag: Bag? = nil
-
+    
     init(bag: Bag) {
         tiles = [TileType?](repeating: nil, count: MAX_NUMBER_OF_TILES)
         gameBag = bag
