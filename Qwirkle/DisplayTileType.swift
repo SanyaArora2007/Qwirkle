@@ -34,17 +34,10 @@ class DisplayTileType: SKShapeNode {
     }
     
     func addGlow(radius: Float = 30) {
-        let view = SKView()
-        let effectNode = SKEffectNode()
-        let texture = view.texture(from: self)
-        effectNode.shouldRasterize = true
-        effectNode.filter = CIFilter(name: "CIGaussianBlur",parameters: ["inputRadius":radius])
-        addChild(effectNode)
-        effectNode.addChild(SKSpriteNode(texture: texture))
-        glow = effectNode
+        self.lineWidth = 5
     }
     
     func removeGlow() {
-        glow?.removeFromParent()
+        self.lineWidth = 1
     }
 }
