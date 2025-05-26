@@ -19,8 +19,9 @@ class ComputerPlayer {
         gameScene = game
     }
     
-    func play() {
+    func play() -> [DisplayTileType] {
         var tilePlaced = 0
+        var boardTiles: [DisplayTileType] = []
         for tile in computerRack.tiles {
             if tile == nil {
                 continue
@@ -31,7 +32,8 @@ class ComputerPlayer {
                         let tileLocation = displayBoard.determinePositionToSnapByRowAndColumn(row: row, column: column)
                         let _ = displayBoard.placeTile(tile: tile!, row: row, column: column, playersTurn: false)
                         gameScene.updateComputerScoreLabel()
-                        gameScene.displayTile(tile: tile!, center: tileLocation, parent: gameScene)
+                        let boardTile = gameScene.displayTile(tile: tile!, center: tileLocation, parent: gameScene)
+                        boardTiles.append(boardTile)
                         computerRack.remove(index: tile!.indexInRack!)
                         tilePlaced += 1
                         break
@@ -48,6 +50,6 @@ class ComputerPlayer {
         else {
             let _ = computerRack.replenish()
         }
-
+        return boardTiles
     }
 }

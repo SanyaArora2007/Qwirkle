@@ -33,7 +33,7 @@ class DisplayTileType: SKShapeNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func addGlow(radius: Float = 30) {
+    func addGlow() {
         self.lineWidth = 5
         self.strokeColor = .white
     }

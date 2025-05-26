@@ -26,6 +26,10 @@ class GameScene: SKScene {
     
     var playerRackBox: SKShapeNode? = nil
     
+    var boardTilesInCurrentTurn: [DisplayTileType] = []
+    
+    var computersTurn: Bool = false
+    
     override func didMove(to view: SKView) {
         startGame()
     }
@@ -50,9 +54,10 @@ class GameScene: SKScene {
     }
     
     
-    func displayTile(tile: TileType, center: CGPoint, parent: SKNode) {
+    func displayTile(tile: TileType, center: CGPoint, parent: SKNode) -> DisplayTileType {
         let newTile = DisplayTileType(inputTile: tile, location: center)
         parent.addChild(newTile)
+        return newTile
     }
     
     func displayPlayerRack() {
@@ -137,7 +142,18 @@ class GameScene: SKScene {
         }
     }
     
+    func removeGlowFromBoardTiles() {
+        for tile in boardTilesInCurrentTurn {
+            tile.removeGlow()
+        }
+        boardTilesInCurrentTurn.removeAll()
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if computersTurn == true {
+            computersTurn = false
+            removeGlowFromBoardTiles()
+        }
         guard let touch = touches.first else { return }
         let clickLocation = touch.location(in: self)
         
@@ -150,7 +166,9 @@ class GameScene: SKScene {
                 let pickedTile = selectedPlayerTile!.tile
                 let wasTilePlaced = displayBoard!.placeTile(tile: pickedTile!, row: row, column: column, playersTurn: true)
                 if wasTilePlaced {
-                    displayTile(tile: pickedTile!, center: tileLocation, parent: self)
+                    let boardTile = displayTile(tile: pickedTile!, center: tileLocation, parent: self)
+                    boardTilesInCurrentTurn.append(boardTile)
+                    boardTile.addGlow()
                     playerRackBox!.removeChildren(in: [selectedPlayerTile!])
                     playerRack!.remove(index: pickedTile!.indexInRack!)
                     selectedPlayerTile = nil
@@ -166,9 +184,10 @@ class GameScene: SKScene {
                 if displayTile != nil && displayTile!.parent == playerRackBox {
                     selectedPlayerTile?.removeGlow()
                     selectedPlayerTile = displayTile
-                    selectedPlayerTile!.addGlow(radius: 30)
+                    selectedPlayerTile!.addGlow()
                 }
                 else if node == turnButton {
+                    removeGlowFromBoardTiles()
                     var replenishedIndices = playerRack!.replenish()
                     if replenishedIndices.count == 0 && gameBag!.tiles.count != 0 {
                         playerRackBox!.removeAllChildren()
@@ -180,7 +199,12 @@ class GameScene: SKScene {
                     for index in replenishedIndices {
                         displayTileInPlayerRack(index: index)
                     }
-                    computer?.play()
+                    computersTurn = true
+                    let boardTiles = computer?.play()
+                    for tile in boardTiles! {
+                        boardTilesInCurrentTurn.append(tile)
+                        tile.addGlow()
+                    }
                     displayBoard!.turnCompleted()
                 }
                 else if node == restartGameButton {
