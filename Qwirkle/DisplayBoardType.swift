@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVKit
 
 class DisplayBoardType {
     
@@ -222,16 +223,19 @@ class DisplayBoardType {
     
     func placeTile(tile: TileType ,row: Int, column: Int, playersTurn: Bool) -> Bool {
         if !canPlaceTile(tile: tile, row: row, column: column) {
+            AudioServicesPlaySystemSound(SystemSoundID(1257))
             return false
         }
         tile.positionOnGameBoard = Coordinate(row: row, column: column)
         tile.placedInCurrentTurn = true
         if playersTurn == true {
             updatePlayerScore(row: row, column: column)
+            AudioServicesPlaySystemSound(SystemSoundID(1104))
         }
         else {
             updateComputerScore(row: row, column: column)
         }
+        
         squares[row][column] = tile
         tilesInCurrentTurn.append(tile)
         isBoardEmpty = false
@@ -307,18 +311,22 @@ class DisplayBoardType {
         
         if leftNeighbors.count == 5 {
             score += 6
+            AudioServicesPlaySystemSound(SystemSoundID(1025))
         }
         
         if rightNeighbors.count == 5 {
             score += 6
+            AudioServicesPlaySystemSound(SystemSoundID(1025))
         }
         
         if aboveNeighbors.count == 5 {
             score += 6
+            AudioServicesPlaySystemSound(SystemSoundID(1025))
         }
         
         if belowNeighbors.count == 5 {
             score += 6
+            AudioServicesPlaySystemSound(SystemSoundID(1025))
         }
         return score
     }

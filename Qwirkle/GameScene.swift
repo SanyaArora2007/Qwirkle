@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import AVKit
 
 class GameScene: SKScene {
     
@@ -128,6 +129,12 @@ class GameScene: SKScene {
         gameOverLabel.position = CGPoint(x: 0, y: 200)
         addChild(gameOverLabel)
         displayRestartButton()
+        if displayBoard!.playerScore > displayBoard!.computerScore {
+            AudioServicesPlaySystemSound(SystemSoundID(1027))
+        }
+        else {
+            AudioServicesPlaySystemSound(SystemSoundID(1024))
+        }
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
