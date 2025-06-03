@@ -211,6 +211,18 @@ class DisplayBoardType {
             }
         }
         
+        for tileCheck in horizontalNeighbors {
+            if tileCheck.color == tile.color && tileCheck.shape == tile.shape {
+                return false
+            }
+        }
+        
+        for tileCheck in verticalNeighbors {
+            if tileCheck.color == tile.color && tileCheck.shape == tile.shape {
+                return false
+            }
+        }
+        
         if !checkDirection(neighbors: horizontalNeighbors, tile: tile) {
             return false
         }
